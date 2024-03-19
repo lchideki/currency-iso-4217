@@ -9,17 +9,15 @@ use Psr\Http\Message\UriInterface;
 use Spatie\Crawler\Crawler;
 use Spatie\Crawler\CrawlObservers\CrawlObserver;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
-use App\Services\ICurrencyService;
+use App\Services\ICrawlCurrencyService;
 
-class WikipediaIso4217CrawlerObserver extends CrawlObserver
+class CrawlCurrencyIso4217Observer extends CrawlObserver implements ICrawlCurrencyIso4217Observer
 {
     protected $currencyService;
 
-    private $pages =[];
-
-    public function __construct(ICurrencyService $currencyService)
+    public function __construct(ICrawlCurrencyService $crawlCurrencyService)
     {
-        $this->currencyService = $currencyService;
+        $this->crawlCurrencyService = $crawlCurrencyService;
     }
 
     public function willCrawl(UriInterface $uri, ?string $linkText): void {
@@ -42,28 +40,12 @@ class WikipediaIso4217CrawlerObserver extends CrawlObserver
     ): void {
         $doc = new DOMDocument();
         @$doc->loadHTML($response->getBody());
-        $tableIsoCodesForCurrency = $doc->getElementById("Códigos_ISO_para_moedas")->parentElement->nextElementSibling;     
-        $tableRows = $tableIsoCodesForCurrency->getElementsByTagName('tbody')[0]->getElementsByTagName('tr');
-        
-        for ($i = 0; $i < $tableRows->length; $i++) {
-            $row = $tableRows->item($i);
-            $cells = $row->getElementsByTagName('td');
 
-            $rowData = [];
-            foreach ($cells as $key => $cell) {
-                $rowData[] = $cell->nodeValue;
-            }
-           
-            if (isset($rowData[0])) 
-            {
-                $this->currencyService->create([
-                    'code' => $rowData[0],
-                    'number' => $rowData[1],
-                    'decimal_digits' => $rowData[2],
-                    'name' => $rowData[3]
-                ]);
-            }
-        }
+        $this->crawlCurrencyService->processDomToData($doc);
+        // 
+       
+
+        // $this->currencyService->createOrUpdateFromTableRows($tableRowsData);
 
         exit;
     }

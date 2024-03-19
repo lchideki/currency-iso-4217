@@ -19,15 +19,19 @@ services:
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - currency-network
+    links:
+      - mongodb
 
   mongodb:
     image: mongo:latest
     container_name: currency-mongodb
     restart: unless-stopped
+    ports:
+      - "27017:27017"
     environment:
-      MONGO_INITDB_DATABASE: currency
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: iso-4217
+      MONGO_INITDB_ROOT_USERNAME: currency
+      MONGO_INITDB_ROOT_PASSWORD: currency
     volumes:
       - mongodata:/data/db
     networks:
