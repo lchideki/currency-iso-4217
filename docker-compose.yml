@@ -1,0 +1,70 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    image: currency-app
+    container_name: currency-app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /app
+    volumes:
+      - .:/app
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - currency-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: currency-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: currency
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongodata:/data/db
+    networks:
+      - currency-network
+
+  redis:
+    image: redis:latest
+    container_name: currency-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - currency-network
+
+  mysql:
+    image: mysql:latest
+    container_name: currency-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysqldata:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: currency
+      MYSQL_USER: currency
+      MYSQL_PASSWORD: currency
+      MYSQL_ROOT_PASSWORD: currency
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
+    networks:
+      - currency-network
+
+networks:
+  currency-network:
+    driver: bridge
+
+volumes:
+  mongodata:
+    driver: local
+  mysqldata:
+    driver: local
