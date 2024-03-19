@@ -9,10 +9,18 @@ use Psr\Http\Message\UriInterface;
 use Spatie\Crawler\Crawler;
 use Spatie\Crawler\CrawlObservers\CrawlObserver;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
+use App\Services\ICurrencyService;
 
 class WikipediaIso4217CrawlerObserver extends CrawlObserver
 {
+    protected $currencyService;
+
     private $pages =[];
+
+    public function __construct(ICurrencyService $currencyService)
+    {
+        $this->currencyService = $currencyService;
+    }
 
     public function willCrawl(UriInterface $uri, ?string $linkText): void {
         echo "Now crawling: " . (string) $uri . PHP_EOL;
@@ -45,10 +53,18 @@ class WikipediaIso4217CrawlerObserver extends CrawlObserver
             foreach ($cells as $key => $cell) {
                 $rowData[] = $cell->nodeValue;
             }
-
-            dump($rowData);
+           
+            if (isset($rowData[0])) 
+            {
+                $this->currencyService->create([
+                    'code' => $rowData[0],
+                    'number' => $rowData[1],
+                    'decimal_digits' => $rowData[2],
+                    'name' => $rowData[3]
+                ]);
+            }
         }
-        
+
         exit;
     }
 
