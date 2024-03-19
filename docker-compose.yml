@@ -51,7 +51,7 @@ services:
     volumes:
       - mysqldata:/var/lib/mysql
     environment:
-      MYSQL_DATABASE: currency
+      MYSQL_DATABASE: iso-4217
       MYSQL_USER: currency
       MYSQL_PASSWORD: currency
       MYSQL_ROOT_PASSWORD: currency
