@@ -13,9 +13,23 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 RUN apt-get install -y libcurl4-openssl-dev pkg-config libssl-dev
 
-# Instale o driver MongoDB
-RUN pecl install mongodb \
-    && docker-php-ext-enable mongodb 
+# Configure o PHP para usar o Redis
+RUN pecl install redis \
+    && docker-php-ext-enable redis
+
 
 # Definir o diretório de trabalho
 WORKDIR /app
+
+# Copie o arquivo de dependências do Composer e instale as dependências
+COPY composer.json composer.lock ./
+RUN composer install --no-scripts --no-autoloader
+
+# Copie o resto do código-fonte da aplicação
+COPY . .
+
+# Execute o Composer para gerar o autoload
+RUN composer dump-autoload --optimize
+
+# Garanta que o diretório storage e seus subdiretórios tenham permissões adequadas
+RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache

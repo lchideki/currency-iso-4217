@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('CACHE_STORE', 'database'),
+    'default' => env('CACHE_DRIVER', 'redis'),
 
     /*
     |--------------------------------------------------------------------------
@@ -72,8 +72,13 @@ return [
 
         'redis' => [
             'driver' => 'redis',
-            'connection' => env('REDIS_CACHE_CONNECTION', 'cache'),
-            'lock_connection' => env('REDIS_CACHE_LOCK_CONNECTION', 'default'),
+            'connection' => 'default',
+            'lock_connection' => 'default',
+            'client' => env('REDIS_CLIENT', 'predis'),
+            'options' => [
+                'cluster' => env('REDIS_CLUSTER', 'redis'),
+                'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_cache_'),
+            ],
         ],
 
         'dynamodb' => [

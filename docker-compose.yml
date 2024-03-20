@@ -20,22 +20,7 @@ services:
     networks:
       - currency-network
     links:
-      - mongodb
-
-  mongodb:
-    image: mongo:latest
-    container_name: currency-mongodb
-    restart: unless-stopped
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_DATABASE: iso-4217
-      MONGO_INITDB_ROOT_USERNAME: currency
-      MONGO_INITDB_ROOT_PASSWORD: currency
-    volumes:
-      - mongodata:/data/db
-    networks:
-      - currency-network
+      - redis
 
   redis:
     image: redis:latest
@@ -44,31 +29,12 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - currency-network
-
-  mysql:
-    image: mysql:latest
-    container_name: currency-mysql
-    restart: unless-stopped
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysqldata:/var/lib/mysql
-    environment:
-      MYSQL_DATABASE: iso-4217
-      MYSQL_USER: currency
-      MYSQL_PASSWORD: currency
-      MYSQL_ROOT_PASSWORD: currency
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
-    networks:
-      - currency-network
+      - currency-network 
 
 networks:
   currency-network:
     driver: bridge
 
 volumes:
-  mongodata:
-    driver: local
-  mysqldata:
+  redis:
     driver: local

@@ -6,16 +6,17 @@ use App\Services\ICurrencyService;
 use DOMDocument;
 use DOMElement;
 use DOMNodeList;
+use Illuminate\Support\Facades\Cache;
+use InvalidArgumentException;
 
 class CrawlCurrencyService implements ICrawlCurrencyService
 {
-    protected $currencyService;
+ 
     protected $currencyFormatters;
     protected $tableKeyNames;
-
-    public function __construct(ICurrencyService $currencyService)
+    
+    public function __construct()
     {
-        $this->currencyService = $currencyService;
         $this->currencyFormatters = [
             0 => new \App\Utils\CurrencyCellFormatters\CurrencyCodeCellFormatter(),
             1 => new \App\Utils\CurrencyCellFormatters\CurrencyNumberCellFormatter(),
@@ -33,14 +34,10 @@ class CrawlCurrencyService implements ICrawlCurrencyService
         ];
     }
 
-    public function processDomToData(DOMDocument $doc): void
+    public function processDomToData(DOMDocument $doc, array $requestFilter): array
     {
         $arrayCurrencyData = $this->loadDataFromTableCurrency($doc);
-        
-        foreach ($arrayCurrencyData as $currency) 
-        {
-            $this->currencyService->createOrUpdate($currency);
-        }
+        return $arrayCurrencyData;
     }
 
     private function loadDataFromTableCurrency(DOMDocument $doc): array

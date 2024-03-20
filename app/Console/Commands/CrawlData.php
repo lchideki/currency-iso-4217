@@ -5,24 +5,25 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Spatie\Crawler\Crawler;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
-use App\Observers\ICrawlCurrencyIso4217Observer;
+use App\Services\ICrawlCurrencyService;
+use App\Observers\CrawlCurrencyIso4217Observer;
 
 class CrawlData extends Command
 {
     protected $signature = 'crawl:data';
     protected $description = 'Crawl data from a website using spatie/crawler';
-    protected $crawlCurrencyObserver;
+    protected $crawlCurrencyService;
 
-    public function __construct(ICrawlCurrencyIso4217Observer $crawlCurrencyObserver)
+    public function __construct(ICrawlCurrencyService $crawlCurrencyService)
     {
-        $this->crawlCurrencyObserver = $crawlCurrencyObserver;
+        $this->crawlCurrencyService = $crawlCurrencyService;
         parent::__construct();
     }
 
     public function handle()
     {
-        $tableRowsData = Crawler::create()
-            ->setCrawlObserver($this->crawlCurrencyObserver)
+        Crawler::create()
+            ->setCrawlObserver(new CrawlCurrencyIso4217Observer($this->crawlCurrencyService , []))
             ->startCrawling('https://pt.wikipedia.org/wiki/ISO_4217');
     }
 }
