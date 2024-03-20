@@ -3,36 +3,77 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
+use Spatie\Crawler\Crawler;
+use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 use App\Repositories\ICurrencyRepository;
 use App\Services\ICrawlCurrencyService;
 use App\Observers\CrawlCurrencyIso4217Observer;
 
 class CurrencyService implements ICurrencyService
 {
-    protected $currencyRepository;
     protected $crawlCurrencyService;
+    private $dataFiltred;
+    private $cacheTimingInSeconds;
 
-    public function __construct(ICurrencyRepository $currencyRepository, ICrawlCurrencyService $crawlCurrencyService)
-    {
-        $this->currencyRepository = $currencyRepository;
+    public function __construct(ICrawlCurrencyService $crawlCurrencyService)
+    {        
         $this->crawlCurrencyService = $crawlCurrencyService;
+        $this->dataFiltred = [];
+        $this->cacheTimingInMinutes = 720;
+    }
+    
+    private function createOrUpdate(array $filter, array $data): array
+    {   
+        $nameFilter = array_key_first($filter);
+        $keyFind = ($nameFilter == 'number_list' or $nameFilter == 'number') ? 'number' : 'code';
+
+        if (gettype($filter[$nameFilter]) == 'array')
+        {
+            foreach ($filter[$nameFilter] as $filterValue) 
+            {
+                $this->tryAddDataItem($data, $keyFind, $filterValue);
+            }
+
+            return $this->dataFiltred;
+        }
+
+        $this->tryAddDataItem($data, $keyFind, $filter[$nameFilter]);
+
+        $this->storeCache($filter);
+
+        return $this->dataFiltred;
     }
 
-    // public function createOrUpdate(array $data): void
-    // {   
-    //     $currency = $this->currencyRepository->findByCode($data['code']);
+    private function getKeyFilter(array $filter): string
+    {
+        return json_encode($filter);
+    }
 
-    //     if ($currency == null)
-    //         $this->currencyRepository->create($data);
-    //     else
-    //         $this->currencyRepository->update($currency, $data);
-    // }
+    private function storeCache(array $filter): void 
+    {
+        Cache::put($this->getKeyFilter($filter), $this->dataFiltred, now()->addMinutes($this->cacheTimingInMinutes));
+    }
+
+    private function tryAddDataItem(array $data, string $keyFind, string $filterValue): void
+    {
+        $mapedData = $this->mapData($data, $keyFind, $filterValue);
+        if ($mapedData)
+            $this->dataFiltred[] = $mapedData;
+    }
+
+    private function mapData(array $data, string $keyFind, string $filterValue)
+    {
+        $dataByFilter = array_filter($data, function ($value) use (&$keyFind, &$filterValue) {
+            
+            return strtoupper($value[$keyFind]) == strtoupper($filterValue);
+        });
+
+       return $dataByFilter;
+    }
 
     public function find(array $filter): ?array
     {
-        $keyFilter = json_encode($filter);
-
-        $cachedResult = Cache::get($keyFilter);   
+        $cachedResult = Cache::get($this->getKeyFilter($filter));   
 
         return $cachedResult;
     }
@@ -48,6 +89,8 @@ class CurrencyService implements ICurrencyService
 
         $result = $myCrawlObserver->getResult();
 
-        return $result;
+        $this->createOrUpdate($filter, $result);
+
+        return $this->dataFiltred;
     }
 }

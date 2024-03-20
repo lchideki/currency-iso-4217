@@ -3,21 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\ICrawlCurrencyService;
 use InvalidArgumentException;
-use Spatie\Crawler\Crawler;
-use Symfony\Component\DomCrawler\Crawler as DomCrawler;
-use Illuminate\Support\Facades\Cache;
-use App\Observers\CrawlCurrencyIso4217Observer;
+use App\Services\ICurrencyService;
 use App\Utils\RequestFilters\CurrencyRequestFilter;
 
 class CurrencyController extends Controller
 {
-    protected $crawlCurrencyService;
+    protected $currencyService;
 
-    public function __construct(ICrawlCurrencyService $crawlCurrencyService)
+    public function __construct(ICurrencyService $currencyService)
     {
-        $this->crawlCurrencyService = $crawlCurrencyService;
+        $this->currencyService = $currencyService;
     }
 
     public function find(Request $request)
@@ -27,33 +23,16 @@ class CurrencyController extends Controller
         {
             $filter = CurrencyRequestFilter::configure($request);
 
-            dd($filter); exit;
+            $cached = $this->currencyService->find($filter);
 
-            $keyFilter = json_encode($filter);
-            $cachedResult = Cache::get($keyFilter);
+            if ($cached)
+                return response()->json($cached);
 
-            if ($cachedResult)
-                return response()->json($cachedResult);
-
-
-            $myCrawlObserver = new CrawlCurrencyIso4217Observer($this->crawlCurrencyService, $filter);
-
-            $crawler = Crawler::create()
-                ->setCrawlObserver($myCrawlObserver)
-                ->setTotalCrawlLimit(1)
-                ->startCrawling('https://pt.wikipedia.org/wiki/ISO_4217');
-
-            $result = $myCrawlObserver->getResult();
-
-            dd($result);
-
-            echo 'oi';
+            return response()->json($this->currencyService->findCrawling($filter));
         }
         catch (InvalidArgumentException $e)
         {
             return response()->json(['errors' => $e->getMessage()], 422);
         }
-
-        return response()->json([]);
     }
 }
