@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use InvalidArgumentException;
 use App\Services\ICurrencyService;
+use App\Utils\RequestFilters\CurrencyRequestFilter;
 
 class CurrencyController extends Controller
 {
@@ -16,11 +18,21 @@ class CurrencyController extends Controller
 
     public function find(Request $request)
     {
-        $currencies = $this->currencyService->find(['code' => $request->get('code'), 
-            'number' => $request->get('number'), 
-            'number_list' => $request->get('number_list'), 
-            'code_list' => $request->get('code_list')]);
+       
+        try
+        {
+            $filter = CurrencyRequestFilter::configure($request);
 
-        return response()->json($currencies);
+            $cached = $this->currencyService->find($filter);
+           
+            if ($cached)
+                return response()->json($cached);
+
+            return response()->json($this->currencyService->findCrawling($filter));
+        }
+        catch (InvalidArgumentException $e)
+        {
+            return response()->json(['errors' => $e->getMessage()], 422);
+        }
     }
 }

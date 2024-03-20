@@ -4,6 +4,6 @@ namespace App\Services;
 
 interface ICurrencyService
 {
-    public function createOrUpdate(array $data): void;
-    public function find(array $filters): ?array;
+    public function find(array $filter): ?array;
+    public function findCrawling(array $filter): ?array;
 }
