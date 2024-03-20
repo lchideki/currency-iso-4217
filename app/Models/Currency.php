@@ -2,18 +2,16 @@
 
 namespace App\Models;
 
-use MongoDB\Laravel\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
 class Currency extends Model
 {
-    protected $connection = 'mongodb';
-    protected $collection = 'currency';
+    protected $table = 'currency';
 
     protected $fillable = [
         'code',
         'number',
         'decimal_digits',
-        'currency',
-        'locations'
+        'name'
     ];
 }

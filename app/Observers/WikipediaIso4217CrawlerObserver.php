@@ -9,15 +9,17 @@ use Psr\Http\Message\UriInterface;
 use Spatie\Crawler\Crawler;
 use Spatie\Crawler\CrawlObservers\CrawlObserver;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
-use App\Services\ICrawlCurrencyService;
+use App\Services\ICurrencyService;
 
-class CrawlCurrencyIso4217Observer extends CrawlObserver implements ICrawlCurrencyIso4217Observer
+class WikipediaIso4217CrawlerObserver extends CrawlObserver
 {
     protected $currencyService;
 
-    public function __construct(ICrawlCurrencyService $crawlCurrencyService)
+    private $pages =[];
+
+    public function __construct(ICurrencyService $currencyService)
     {
-        $this->crawlCurrencyService = $crawlCurrencyService;
+        $this->currencyService = $currencyService;
     }
 
     public function willCrawl(UriInterface $uri, ?string $linkText): void {
@@ -40,12 +42,28 @@ class CrawlCurrencyIso4217Observer extends CrawlObserver implements ICrawlCurren
     ): void {
         $doc = new DOMDocument();
         @$doc->loadHTML($response->getBody());
+        $tableIsoCodesForCurrency = $doc->getElementById("Códigos_ISO_para_moedas")->parentElement->nextElementSibling;     
+        $tableRows = $tableIsoCodesForCurrency->getElementsByTagName('tbody')[0]->getElementsByTagName('tr');
+        
+        for ($i = 0; $i < $tableRows->length; $i++) {
+            $row = $tableRows->item($i);
+            $cells = $row->getElementsByTagName('td');
 
-        $this->crawlCurrencyService->processDomToData($doc);
-        // 
-       
-
-        // $this->currencyService->createOrUpdateFromTableRows($tableRowsData);
+            $rowData = [];
+            foreach ($cells as $key => $cell) {
+                $rowData[] = $cell->nodeValue;
+            }
+           
+            if (isset($rowData[0])) 
+            {
+                $this->currencyService->create([
+                    'code' => $rowData[0],
+                    'number' => $rowData[1],
+                    'decimal_digits' => $rowData[2],
+                    'name' => $rowData[3]
+                ]);
+            }
+        }
 
         exit;
     }

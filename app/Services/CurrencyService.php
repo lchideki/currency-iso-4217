@@ -13,13 +13,8 @@ class CurrencyService implements ICurrencyService
         $this->currencyRepository = $currencyRepository;
     }
 
-    public function createOrUpdate(array $data): void
-    {   
-        $currency = $this->currencyRepository->findByCode($data['code']);
-
-        if ($currency == null)
-            $this->currencyRepository->create($data);
-        else
-            $this->currencyRepository->update($currency, $data);
+    public function create(array $data)
+    {
+        return $this->currencyRepository->create($data);
     }
 }
