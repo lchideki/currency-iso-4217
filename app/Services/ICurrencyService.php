@@ -4,5 +4,5 @@ namespace App\Services;
 
 interface ICurrencyService
 {
-    public function create(array $data);
+    public function createOrUpdate(array $data): void;
 }
