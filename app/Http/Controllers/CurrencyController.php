@@ -24,7 +24,7 @@ class CurrencyController extends Controller
             $filter = CurrencyRequestFilter::configure($request);
 
             $cached = $this->currencyService->find($filter);
-
+           
             if ($cached)
                 return response()->json($cached);
 

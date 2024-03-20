@@ -33,11 +33,12 @@ class CurrencyService implements ICurrencyService
             {
                 $this->tryAddDataItem($data, $keyFind, $filterValue);
             }
-
-            return $this->dataFiltred;
+        }
+        else 
+        {
+            $this->tryAddDataItem($data, $keyFind, $filter[$nameFilter]);
         }
 
-        $this->tryAddDataItem($data, $keyFind, $filter[$nameFilter]);
 
         $this->storeCache($filter);
 
@@ -68,7 +69,7 @@ class CurrencyService implements ICurrencyService
             return strtoupper($value[$keyFind]) == strtoupper($filterValue);
         });
 
-       return $dataByFilter;
+       return $dataByFilter[array_key_first($dataByFilter)];
     }
 
     public function find(array $filter): ?array
