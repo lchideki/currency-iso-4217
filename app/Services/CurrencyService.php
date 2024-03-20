@@ -22,6 +22,29 @@ class CurrencyService implements ICurrencyService
         $this->cacheTimingInMinutes = 720;
     }
     
+    public function find(array $filter): ?array
+    {
+        $cachedResult = Cache::get($this->getKeyFilter($filter));   
+
+        return $cachedResult;
+    }
+
+    public function findCrawling(array $filter): ?array
+    {
+        $myCrawlObserver = new CrawlCurrencyIso4217Observer($this->crawlCurrencyService, $filter);
+
+        $crawler = Crawler::create()
+            ->setCrawlObserver($myCrawlObserver)
+            ->setTotalCrawlLimit(1)
+            ->startCrawling('https://pt.wikipedia.org/wiki/ISO_4217');
+
+        $result = $myCrawlObserver->getResult();
+
+        $this->createOrUpdate($filter, $result);
+
+        return $this->dataFiltred;
+    }
+
     private function createOrUpdate(array $filter, array $data): array
     {   
         $nameFilter = array_key_first($filter);
@@ -70,28 +93,5 @@ class CurrencyService implements ICurrencyService
         });
 
        return $dataByFilter[array_key_first($dataByFilter)];
-    }
-
-    public function find(array $filter): ?array
-    {
-        $cachedResult = Cache::get($this->getKeyFilter($filter));   
-
-        return $cachedResult;
-    }
-
-    public function findCrawling(array $filter): ?array
-    {
-        $myCrawlObserver = new CrawlCurrencyIso4217Observer($this->crawlCurrencyService, $filter);
-
-        $crawler = Crawler::create()
-            ->setCrawlObserver($myCrawlObserver)
-            ->setTotalCrawlLimit(1)
-            ->startCrawling('https://pt.wikipedia.org/wiki/ISO_4217');
-
-        $result = $myCrawlObserver->getResult();
-
-        $this->createOrUpdate($filter, $result);
-
-        return $this->dataFiltred;
     }
 }
