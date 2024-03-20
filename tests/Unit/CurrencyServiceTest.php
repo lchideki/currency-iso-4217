@@ -10,13 +10,27 @@ use App\Services\ICacheService;
 use App\Observers\ICrawlCurrencyIso4217Observer;
 use Spatie\Crawler\Crawler;
 
+/**
+ * Class CurrencyServiceTest
+ * Testes unitários para a classe CurrencyService.
+ */
 class CurrencyServiceTest extends TestCase
 {
+    /** @var ICrawlCurrencyService|\Mockery\LegacyMockInterface|\Mockery\MockInterface */
     protected $crawlCurrencyServiceMock;
+
+    /** @var ICacheService|\Mockery\LegacyMockInterface|\Mockery\MockInterface */
     protected $cacheServiceMock;
+
+    /** @var ICrawlCurrencyIso4217Observer|\Mockery\LegacyMockInterface|\Mockery\MockInterface */
     protected $crawlCurrencyIso4217Observer;
+
+    /** @var Crawler|\Mockery\LegacyMockInterface|\Mockery\MockInterface */
     protected $crawlerMock;
 
+    /**
+     * Configuração inicial para os testes.
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -27,6 +41,9 @@ class CurrencyServiceTest extends TestCase
         $this->crawlerMock = Mockery::mock('overload:' . Crawler::class);
     }
     
+    /**
+     * Testa o método find da classe CurrencyService.
+     */
     public function testFind(): void
     {
         $expectedData = [
@@ -61,6 +78,9 @@ class CurrencyServiceTest extends TestCase
         // End Assert
     }
 
+    /**
+     * Testa o método findCrawling da classe CurrencyService.
+     */
     public function testFindCrawling(): void
     {
         $filter = ['code' => 'ALL'];
@@ -128,6 +148,9 @@ class CurrencyServiceTest extends TestCase
         // End Assert
     }
 
+    /**
+     * Limpa os mocks após cada teste.
+     */
     public function tearDown(): void
     {
         parent::tearDown();
