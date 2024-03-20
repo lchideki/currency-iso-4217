@@ -9,6 +9,7 @@ use Spatie\Crawler\Crawler;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 use Illuminate\Support\Facades\Cache;
 use App\Observers\CrawlCurrencyIso4217Observer;
+use App\Utils\RequestFilters\CurrencyRequestFilter;
 
 class CurrencyController extends Controller
 {
@@ -21,19 +22,20 @@ class CurrencyController extends Controller
 
     public function find(Request $request)
     {
-        $filter = ['code' => $request->get('code'), 
-            'number' => $request->get('number'), 
-            'number_list' => $request->get('number_list'), 
-            'code_list' => $request->get('code_list')];
-
-        $keyFilter = json_encode($filter);
-        $cachedResult = Cache::get($keyFilter);
-
-        if ($cachedResult)
-            return response()->json($cachedResult);
-
+       
         try
         {
+            $filter = CurrencyRequestFilter::configure($request);
+
+            dd($filter); exit;
+
+            $keyFilter = json_encode($filter);
+            $cachedResult = Cache::get($keyFilter);
+
+            if ($cachedResult)
+                return response()->json($cachedResult);
+
+
             $myCrawlObserver = new CrawlCurrencyIso4217Observer($this->crawlCurrencyService, $filter);
 
             $crawler = Crawler::create()
@@ -41,7 +43,7 @@ class CurrencyController extends Controller
                 ->setTotalCrawlLimit(1)
                 ->startCrawling('https://pt.wikipedia.org/wiki/ISO_4217');
 
-                $result = $myCrawlObserver->getResult();
+            $result = $myCrawlObserver->getResult();
 
             dd($result);
 

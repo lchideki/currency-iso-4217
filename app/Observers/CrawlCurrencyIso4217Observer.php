@@ -10,6 +10,8 @@ use Spatie\Crawler\Crawler;
 use Spatie\Crawler\CrawlObservers\CrawlObserver;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 use App\Services\ICrawlCurrencyService;
+use Illuminate\Support\Facades\Log;
+
 
 class CrawlCurrencyIso4217Observer extends CrawlObserver
 {
@@ -63,6 +65,7 @@ class CrawlCurrencyIso4217Observer extends CrawlObserver
         ?string $linkText = null
     ): void 
     {
+        Log::error('crawlFailed: ' . $url);
     }
 
     public function finishedCrawling(): void
