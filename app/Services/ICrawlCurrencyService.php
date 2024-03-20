@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+
 use DOMDocument;
 
 interface ICrawlCurrencyService

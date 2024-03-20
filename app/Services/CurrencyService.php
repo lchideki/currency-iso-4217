@@ -2,43 +2,47 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Cache;
 use Spatie\Crawler\Crawler;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 use App\Repositories\ICurrencyRepository;
 use App\Services\ICrawlCurrencyService;
-use App\Observers\CrawlCurrencyIso4217Observer;
+use App\Observers\ICrawlCurrencyIso4217Observer;
+use App\Services\ICacheService;
 
 class CurrencyService implements ICurrencyService
 {
     protected $crawlCurrencyService;
-    private $dataFiltred;
-    private $cacheTimingInSeconds;
+    protected $cacheService;
+    protected $crawlCurrencyIso4217Observer;
+    protected $dataFiltred;
+    protected $cacheTimingInMinutes;
 
-    public function __construct(ICrawlCurrencyService $crawlCurrencyService)
+    public function __construct(ICrawlCurrencyService $crawlCurrencyService, ICacheService $cacheService, ICrawlCurrencyIso4217Observer $crawlCurrencyIso4217Observer)
     {        
         $this->crawlCurrencyService = $crawlCurrencyService;
+        $this->crawlCurrencyIso4217Observer = $crawlCurrencyIso4217Observer;
+        $this->cacheService = $cacheService;
         $this->dataFiltred = [];
         $this->cacheTimingInMinutes = 720;
     }
     
     public function find(array $filter): ?array
     {
-        $cachedResult = Cache::get($this->getKeyFilter($filter));   
+        $cachedResult = $this->cacheService->get($this->getKeyFilter($filter));
 
         return $cachedResult;
     }
 
     public function findCrawling(array $filter): ?array
     {
-        $myCrawlObserver = new CrawlCurrencyIso4217Observer($this->crawlCurrencyService, $filter);
+        $this->crawlCurrencyIso4217Observer->setFilter($filter);
 
         $crawler = Crawler::create()
-            ->setCrawlObserver($myCrawlObserver)
+            ->setCrawlObserver($this->crawlCurrencyIso4217Observer)
             ->setTotalCrawlLimit(1)
             ->startCrawling('https://pt.wikipedia.org/wiki/ISO_4217');
 
-        $result = $myCrawlObserver->getResult();
+        $result = $this->crawlCurrencyIso4217Observer->getResult();
 
         $this->createOrUpdate($filter, $result);
 
@@ -75,7 +79,7 @@ class CurrencyService implements ICurrencyService
 
     private function storeCache(array $filter): void 
     {
-        Cache::put($this->getKeyFilter($filter), $this->dataFiltred, now()->addMinutes($this->cacheTimingInMinutes));
+        $this->cacheService->put($this->getKeyFilter($filter), $this->dataFiltred, now()->addMinutes($this->cacheTimingInMinutes));
     }
 
     private function tryAddDataItem(array $data, string $keyFind, string $filterValue): void

@@ -14,6 +14,6 @@ class RepositoryServiceProvider extends ServiceProvider
      * @var array
      */
     public $bindings = [
-        ICurrencyRepository::class => CurrencyRepository::class,
+        
     ];
 }
