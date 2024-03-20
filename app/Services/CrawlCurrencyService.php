@@ -6,16 +6,19 @@ use App\Services\ICurrencyService;
 use DOMDocument;
 use DOMElement;
 use DOMNodeList;
+use Illuminate\Support\Facades\Cache;
+use InvalidArgumentException;
 
 class CrawlCurrencyService implements ICrawlCurrencyService
 {
     protected $currencyService;
     protected $currencyFormatters;
     protected $tableKeyNames;
-
+    
     public function __construct(ICurrencyService $currencyService)
     {
         $this->currencyService = $currencyService;
+
         $this->currencyFormatters = [
             0 => new \App\Utils\CurrencyCellFormatters\CurrencyCodeCellFormatter(),
             1 => new \App\Utils\CurrencyCellFormatters\CurrencyNumberCellFormatter(),
@@ -31,17 +34,64 @@ class CrawlCurrencyService implements ICrawlCurrencyService
             3 => 'currency',
             4 => 'locations',
         ];
+        
+        // $this->filters = [
+        //     0 => new \App\Utils\CurrencyCellFormatters\CurrencyCodeCellFormatter(),
+        //     1 => new \App\Utils\CurrencyCellFormatters\CurrencyNumberCellFormatter(),
+        //     2 => new \App\Utils\CurrencyCellFormatters\CurrencyDecimalDigitsCellFormatter(),
+        //     3 => new \App\Utils\CurrencyCellFormatters\CurrencyNameCellFormatter(),
+        //     4 => new \App\Utils\CurrencyCellFormatters\CurrencyLocationCellFormatter(),
+        // ];
     }
 
-    public function processDomToData(DOMDocument $doc): void
+    public function processDomToData(DOMDocument $doc, array $requestFilter): array
     {
         $arrayCurrencyData = $this->loadDataFromTableCurrency($doc);
-        
-        foreach ($arrayCurrencyData as $currency) 
-        {
-            $this->currencyService->createOrUpdate($currency);
-        }
+        return $arrayCurrencyData;
+
+        // foreach ($arrayCurrencyData as $currency) 
+        // {
+        //     $this->currencyService->createOrUpdate($currency);
+        // }
     }
+
+    // public function find(array $filters): ?array
+    // {
+    //     $result = [];
+
+    //     $definitiveFilter = $this->validateFilters($filters);
+
+    //     foreach ($definitiveFilter as $key => $filter) 
+    //     {
+    //         dump($filter);
+    //     }
+    //     dump($definitiveFilter); exit;
+    //     $value = Cache::remember('key', 900, function () {
+    //         return 'Value to cache';
+    //     });
+
+    //     return [];
+    // }
+
+    // private function validateFilters(array $filters)
+    // {
+    //     $qtdFilterSended = 0;
+    //     $definitiveFilter = [];
+
+    //     foreach ($filters as $key => $filter)
+    //     {
+    //         if ($filter) 
+    //         {
+    //             $definitiveFilter[$key] = $filter;
+    //             $qtdFilterSended++;
+    //         }
+    //     }
+        
+    //     if ($qtdFilterSended != 1)
+    //         throw new InvalidArgumentException("Exatamente um filtro deve ser informado para a consulta.");
+
+    //     return $definitiveFilter;
+    // }
 
     private function loadDataFromTableCurrency(DOMDocument $doc): array
     {

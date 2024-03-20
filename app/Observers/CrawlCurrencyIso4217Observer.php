@@ -11,17 +11,21 @@ use Spatie\Crawler\CrawlObservers\CrawlObserver;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 use App\Services\ICrawlCurrencyService;
 
-class CrawlCurrencyIso4217Observer extends CrawlObserver implements ICrawlCurrencyIso4217Observer
+class CrawlCurrencyIso4217Observer extends CrawlObserver
 {
     protected $currencyService;
+    protected $requestFilter;
+    protected $result = [];
 
-    public function __construct(ICrawlCurrencyService $crawlCurrencyService)
+    public function __construct(ICrawlCurrencyService $crawlCurrencyService, array $requestFilter)
     {
         $this->crawlCurrencyService = $crawlCurrencyService;
+        $this->requestFilter = $requestFilter;
     }
 
-    public function willCrawl(UriInterface $uri, ?string $linkText): void {
-        echo "Now crawling: " . (string) $uri . PHP_EOL;
+    public function willCrawl(UriInterface $uri, ?string $linkText): void 
+    {
+      
     }
 
     /**
@@ -41,13 +45,7 @@ class CrawlCurrencyIso4217Observer extends CrawlObserver implements ICrawlCurren
         $doc = new DOMDocument();
         @$doc->loadHTML($response->getBody());
 
-        $this->crawlCurrencyService->processDomToData($doc);
-        // 
-       
-
-        // $this->currencyService->createOrUpdateFromTableRows($tableRowsData);
-
-        exit;
+        $this->result = $this->crawlCurrencyService->processDomToData($doc, $this->requestFilter);
     }
 
     /**
@@ -63,15 +61,17 @@ class CrawlCurrencyIso4217Observer extends CrawlObserver implements ICrawlCurren
         RequestException $requestException,
         ?UriInterface $foundOnUrl = null,
         ?string $linkText = null
-    ): void {
-        echo 'failed';
+    ): void 
+    {
     }
 
     public function finishedCrawling(): void
     {
-        echo 'crawled ' . count($this->pages) . ' urls' . PHP_EOL;
-        foreach ($this->pages as $page){
-            echo sprintf("Url  path: %s Page title: %s%s", $page['path'], $page['title'], PHP_EOL);
-        }
+        
+    }
+
+    public function getResult() 
+    {
+        return $this->result;
     }
 }

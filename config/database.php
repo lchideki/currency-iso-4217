@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mongodb'),
+    // 'default' => env('DB_CONNECTION', 'redis'),
 
     /*
     |--------------------------------------------------------------------------
@@ -107,18 +107,6 @@ return [
             'prefix_indexes' => true,
             // 'encrypt' => env('DB_ENCRYPT', 'yes'),
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
-        ],
-
-        'mongodb' => [
-            'driver'   => 'mongodb',
-            'host'     => env('DB_HOST', 'mongodb'),
-            'port'     => env('DB_PORT', 27017),
-            'database' => env('DB_DATABASE', 'iso-4217'),
-            'username' => env('DB_USERNAME', 'currency'),
-            'password' => env('DB_PASSWORD', 'currency'),
-            'options'  => [
-                'database' => 'admin' // Defina o banco de dados de autenticação (opcional)
-            ]
         ]
     ],
 
