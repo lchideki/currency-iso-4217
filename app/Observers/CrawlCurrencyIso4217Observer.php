@@ -13,15 +13,20 @@ use App\Services\ICrawlCurrencyService;
 use Illuminate\Support\Facades\Log;
 
 
-class CrawlCurrencyIso4217Observer extends CrawlObserver
+class CrawlCurrencyIso4217Observer extends CrawlObserver implements ICrawlCurrencyIso4217Observer
 {
     protected $currencyService;
     protected $requestFilter;
     protected $result = [];
 
-    public function __construct(ICrawlCurrencyService $crawlCurrencyService, array $requestFilter)
+    public function __construct(ICrawlCurrencyService $crawlCurrencyService)
     {
         $this->crawlCurrencyService = $crawlCurrencyService;
+        
+    }
+
+    public  function setFilter($requestFilter)
+    {
         $this->requestFilter = $requestFilter;
     }
 

@@ -7,6 +7,8 @@ use App\Services\ICurrencyService;
 use App\Services\CurrencyService;
 use App\Services\ICrawlCurrencyService;
 use App\Services\CrawlCurrencyService;
+use App\Services\ICacheService;
+use App\Services\CacheService;
 
 class ServiceServiceProvider extends ServiceProvider
 {
@@ -18,5 +20,6 @@ class ServiceServiceProvider extends ServiceProvider
     public $bindings = [
         ICurrencyService::class => CurrencyService::class,
         ICrawlCurrencyService::class => CrawlCurrencyService::class,
+        ICacheService::class => CacheService::class,
     ];
 }
