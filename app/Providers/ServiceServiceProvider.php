@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Services\ICurrencyService;
 use App\Services\CurrencyService;
+use App\Services\ICrawlCurrencyService;
+use App\Services\CrawlCurrencyService;
 
 class ServiceServiceProvider extends ServiceProvider
 {
@@ -15,5 +17,6 @@ class ServiceServiceProvider extends ServiceProvider
      */
     public $bindings = [
         ICurrencyService::class => CurrencyService::class,
+        ICrawlCurrencyService::class => CrawlCurrencyService::class,
     ];
 }
