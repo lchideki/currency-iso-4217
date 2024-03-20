@@ -22,4 +22,9 @@ class CurrencyService implements ICurrencyService
         else
             $this->currencyRepository->update($currency, $data);
     }
+
+    public function find(array $filters): ?array
+    {
+        return  $this->currencyRepository->find($filters);
+    }
 }
