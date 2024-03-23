@@ -35,6 +35,8 @@ cp .env.example .env
 4. Utilize as seguintes configurações para a conexão do redis no arquivo ".env":
 
 ```bash
+APP_URL=http://localhost:8000
+
 REDIS_HOST=redis
 REDIS_PASSWORD=null
 REDIS_PORT=6379
