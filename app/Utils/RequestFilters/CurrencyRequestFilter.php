@@ -64,11 +64,11 @@ class CurrencyRequestFilter
                 $finalFilter[$key] = $requestFilter;
                 
                 $quantity_filter++;
-
-                if ($quantity_filter != 1)
-                    throw new InvalidArgumentException("Informe exatamente um filtro para pesquisa.");
             }
         }
+
+        if ($quantity_filter != 1)
+            throw new InvalidArgumentException("Informe exatamente um filtro para pesquisa.");
 
         return $finalFilter;
     }
