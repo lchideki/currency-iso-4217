@@ -102,7 +102,7 @@ Esta documentação detalha as informações do retorno da consulta sobre a moed
 
 ## Exemplo de Resposta JSON
 
-Aqui está um exemplo de como um objeto JSON representando a moeda GEL (LARI) pode ser estruturado em uma API:
+Aqui está um exemplo de como um objeto JSON representando a moeda GEL (LARI):
 
 ```json
 {
