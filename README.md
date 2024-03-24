@@ -1,4 +1,4 @@
-# CURRENCY-ISO-4217
+### CURRENCY-ISO-4217
 
 ## Descrição
 
@@ -62,13 +62,13 @@ docker-compose exec app php artisan serve --host=0.0.0.0 --port=8000
 
 8. A aplicação estará disponível em `http://localhost:8000`
 
-### Consultar Informações de Moeda
+## Consultar Informações de Moeda
 
 - **URL**: `http://localhost:8000/api/currency`
 - **Método HTTP**: GET
 - **Descrição**: Este endpoint permite consultar informações sobre uma moeda com base em seu número ou código.
 
-#### Parâmetros da Solicitação
+## Parâmetros da Solicitação
 
 | Parâmetro        | Tipo     | Descrição                                            |
 |------------------|----------|------------------------------------------------------|
@@ -76,14 +76,15 @@ docker-compose exec app php artisan serve --host=0.0.0.0 --port=8000
 | `code`           | String   | Código da moeda que você deseja consultar            |
 | `number_list`    | Array   | Array de Números da moeda que você deseja consultar  |
 | `code_list`      | Array   | Array de Códigos da moeda que você deseja consultar  |
-#### Exemplo de Solicitação
+
+## Exemplo de Solicitação
 
 - Consultar informações de uma moeda pelo número:
 
   ```http
   GET http://localhost:8000/api/currency?code=GEL
 
-# Documentação do response Moeda
+## Documentação do response Moeda
 
 Esta documentação detalha as informações do retorno da consulta sobre a moeda.
 
