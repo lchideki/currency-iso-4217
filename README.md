@@ -82,7 +82,42 @@ docker-compose exec app php artisan serve --host=0.0.0.0 --port=8000
 
   ```http
   GET http://localhost:8000/api/currency?number=008
-  
+
+# Documentação da Moeda GEL (LARI)
+
+Esta documentação detalha as informações sobre a moeda GEL (LARI), que é a moeda oficial da Geórgia.
+
+## Detalhes da Moeda
+
+- **Código da Moeda:** GEL
+- **Número da Moeda:** 981
+- **Dígitos Decimais:** 2
+- **Nome da Moeda:** LARI
+
+## Países que Utilizam a Moeda
+
+- **Geórgia (locations['location'])**
+  - ![Bandeira da Geórgia](https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Flag_of_Georgia.svg/22px-Flag_of_Georgia.svg.png) (locations['icon'])
+
+## Exemplo de Resposta JSON
+
+Aqui está um exemplo de como um objeto JSON representando a moeda GEL (LARI) pode ser estruturado em uma API:
+
+```json
+{
+  "code": "GEL",
+  "number": "981",
+  "decimal_digits": 2,
+  "currency": "LARI",
+  "locations": [
+    {
+      "icon": "//upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Flag_of_Georgia.svg/22px-Flag_of_Georgia.svg.png",
+      "location": "Geórgia"
+    }
+  ]
+}
+```
+
 ## Comandos Úteis do Docker
 
 - Iniciar a aplicação:
