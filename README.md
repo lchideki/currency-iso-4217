@@ -81,11 +81,11 @@ docker-compose exec app php artisan serve --host=0.0.0.0 --port=8000
 - Consultar informações de uma moeda pelo número:
 
   ```http
-  GET http://localhost:8000/api/currency?number=008
+  GET http://localhost:8000/api/currency?code=GEL
 
-# Documentação da Moeda GEL (LARI)
+# Documentação do response Moeda
 
-Esta documentação detalha as informações sobre a moeda GEL (LARI), que é a moeda oficial da Geórgia.
+Esta documentação detalha as informações do retorno da consulta sobre a moeda.
 
 ## Detalhes da Moeda
 
