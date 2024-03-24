@@ -87,7 +87,7 @@ docker-compose exec app php artisan serve --host=0.0.0.0 --port=8000
 
 Esta documentação detalha as informações do retorno da consulta sobre a moeda.
 
-## Detalhes da Moeda
+## Detalhes da Moeda (Exemplo moeda LARI. Código "GEL").
 
 - **Código da Moeda:** GEL
 - **Número da Moeda:** 981
