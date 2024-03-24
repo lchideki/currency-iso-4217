@@ -97,8 +97,8 @@ Esta documentação detalha as informações do retorno da consulta sobre a moed
 
 ## Países que Utilizam a Moeda
 
-- **Geórgia (locations['location'])**
-  - ![Bandeira da Geórgia](https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Flag_of_Georgia.svg/22px-Flag_of_Georgia.svg.png) (locations['icon'])
+- **Geórgia (Location)**
+  - ![Bandeira da Geórgia](https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Flag_of_Georgia.svg/22px-Flag_of_Georgia.svg.png) (Icon)
 
 ## Exemplo de Resposta JSON
 
