@@ -62,6 +62,27 @@ docker-compose exec app php artisan serve --host=0.0.0.0 --port=8000
 
 8. A aplicação estará disponível em `http://localhost:8000`
 
+### Consultar Informações de Moeda
+
+- **URL**: `http://localhost:8000/api/currency`
+- **Método HTTP**: GET
+- **Descrição**: Este endpoint permite consultar informações sobre uma moeda com base em seu número ou código.
+
+#### Parâmetros da Solicitação
+
+| Parâmetro        | Tipo     | Descrição                                            |
+|------------------|----------|------------------------------------------------------|
+| `number`         | String   | Número da moeda que você deseja consultar            |
+| `code`           | String   | Código da moeda que você deseja consultar            |
+| `number_list`    | Array   | Array de Números da moeda que você deseja consultar  |
+| `code_list`      | Array   | Array de Códigos da moeda que você deseja consultar  |
+#### Exemplo de Solicitação
+
+- Consultar informações de uma moeda pelo número:
+
+  ```http
+  GET http://localhost:8000/api/currency?number=008
+  
 ## Comandos Úteis do Docker
 
 - Iniciar a aplicação:
@@ -87,6 +108,7 @@ docker-compose exec app php artisan serve --host=0.0.0.0 --port=8000
     ```bash
     docker-compose exec app bash
     ```
+
 
 ## Contribuição
 
