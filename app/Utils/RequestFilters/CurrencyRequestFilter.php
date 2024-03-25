@@ -51,7 +51,7 @@ class CurrencyRequestFilter
 
         foreach (self::allowedFilters() as $key)
         {
-            if ($request->has($key) && $request->input($key)) 
+            if ($request->has($key)) 
             {
                 $requestFilter = $request->input($key);
 
@@ -66,7 +66,7 @@ class CurrencyRequestFilter
                 $quantity_filter++;
             }
         }
-
+    
         if ($quantity_filter != 1)
             throw new InvalidArgumentException("Informe exatamente um filtro para pesquisa.");
 
