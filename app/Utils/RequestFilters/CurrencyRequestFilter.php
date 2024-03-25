@@ -56,7 +56,8 @@ class CurrencyRequestFilter
                 $requestFilter = $request->input($key);
 
                 if (gettype($requestFilter) == 'array') 
-                {
+                {   
+                    $requestFilter = array_unique($requestFilter);
                     sort($requestFilter);
                     array_change_key_case($requestFilter, CASE_UPPER);                    
                 }
