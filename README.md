@@ -79,7 +79,7 @@ docker-compose exec app php artisan serve --host=0.0.0.0 --port=8000
 
 ## Exemplo de Solicitação
 
-- Consultar informações de uma moeda pelo número:
+- Consultar informações de uma moeda pelo código:
 
   ```http
   GET http://localhost:8000/api/currency?code=GEL
